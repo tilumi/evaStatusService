@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/lucasmf/Documents/workspace-sts-3.6.3.SR1/forever-official/libexec/evaStatusService/static/client-app/js/components/header.js":[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/lucasmf/git/evaStatusService/static/client-app/js/components/header.js":[function(require,module,exports){
 Navbar = ReactBootstrap.Navbar;
 Nav = ReactBootstrap.Nav;
 NavItem = ReactBootstrap.NavItem;
@@ -17,7 +17,7 @@ Header = React.createClass({displayName: "Header",
 module.exports = Header;
 
 
-},{}],"/Users/lucasmf/Documents/workspace-sts-3.6.3.SR1/forever-official/libexec/evaStatusService/static/client-app/js/eva_status/index.js":[function(require,module,exports){
+},{}],"/Users/lucasmf/git/evaStatusService/static/client-app/js/eva_status/index.js":[function(require,module,exports){
 window.Request = require('superagent');
 window.moment = require('moment');
 window.Table = ReactBootstrap.Table;
@@ -174,25 +174,26 @@ EVA_STATUS_TABLE = React.createClass({displayName: "EVA_STATUS_TABLE",
         console.log(this.state.loaded);
         return (
             React.createElement("div", null, 
-                React.createElement("div", null, 
-                    "讀取中，請稍候..."
+                React.createElement("h3", {style: {display: this.state.loaded ? 'none' : 'block', textAlign: 'center'}}, 
+                "讀取中，請稍候..."
                 ), 
-                React.createElement(Table, {striped: true, bordered: true, condensed: true, hover: true}, 
-                    React.createElement("thead", null, 
-                        React.createElement("tr", null, 
-                            React.createElement("th", null), 
+                React.createElement("div", {style: {display: this.state.loaded ? 'block' : 'none'}}, 
+                    React.createElement(Table, {striped: true, bordered: true, condensed: true, hover: true}, 
+                        React.createElement("thead", null, 
+                            React.createElement("tr", null, 
+                                React.createElement("th", null), 
                 this.state.levels.map(function (level) {
                     return (
                         React.createElement("th", null, level.label)
                         )
                 }), 
                     
-                            React.createElement("th", null)
-                        )
-                    ), 
-                    React.createElement("tbody", null, 
-                        React.createElement("tr", null, 
-                            React.createElement("td", null), 
+                                React.createElement("th", null)
+                            )
+                        ), 
+                        React.createElement("tbody", null, 
+                            React.createElement("tr", null, 
+                                React.createElement("td", null), 
                     this.state.levels.map(function (level) {
                         var matchedEvaStatusList = $.grep(this.state.evaStatusList, function (evaStatus) {
                             return level.isLevel(evaStatus)
@@ -202,10 +203,10 @@ EVA_STATUS_TABLE = React.createClass({displayName: "EVA_STATUS_TABLE",
                             )
                     }.bind(this)), 
                         
-                            React.createElement("td", null, this.state.evaStatusList.length, "(", this.getListeningEvaStatusBetweenPeriod(this.state.evaStatusList), ")"
+                                React.createElement("td", null, this.state.evaStatusList.length, "(", this.getListeningEvaStatusBetweenPeriod(this.state.evaStatusList), ")"
 
-                            )
-                        ), 
+                                )
+                            ), 
                 
                     this.state.departs.map(function (depart) {
                         var matchedEvaStatusList = $.grep(this.state.evaStatusList, function (evaStatus) {
@@ -238,9 +239,10 @@ EVA_STATUS_TABLE = React.createClass({displayName: "EVA_STATUS_TABLE",
                         ));
                     }.bind(this))
                     
+                        )
                     )
                 )
-               )
+            )
             );
     }
 })
@@ -340,7 +342,7 @@ Actions.setTimeRange({start: moment().add(-7, 'days').format('YYYY/MM/DD'), end:
 
 
 
-},{"../components/header":"/Users/lucasmf/Documents/workspace-sts-3.6.3.SR1/forever-official/libexec/evaStatusService/static/client-app/js/components/header.js","moment":"/Users/lucasmf/Documents/workspace-sts-3.6.3.SR1/forever-official/libexec/evaStatusService/static/node_modules/moment/moment.js","superagent":"/Users/lucasmf/Documents/workspace-sts-3.6.3.SR1/forever-official/libexec/evaStatusService/static/node_modules/superagent/lib/client.js"}],"/Users/lucasmf/Documents/workspace-sts-3.6.3.SR1/forever-official/libexec/evaStatusService/static/node_modules/moment/moment.js":[function(require,module,exports){
+},{"../components/header":"/Users/lucasmf/git/evaStatusService/static/client-app/js/components/header.js","moment":"/Users/lucasmf/git/evaStatusService/static/node_modules/moment/moment.js","superagent":"/Users/lucasmf/git/evaStatusService/static/node_modules/superagent/lib/client.js"}],"/Users/lucasmf/git/evaStatusService/static/node_modules/moment/moment.js":[function(require,module,exports){
 (function (global){
 //! moment.js
 //! version : 2.9.0
@@ -3388,7 +3390,7 @@ Actions.setTimeRange({start: moment().add(-7, 'days').format('YYYY/MM/DD'), end:
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],"/Users/lucasmf/Documents/workspace-sts-3.6.3.SR1/forever-official/libexec/evaStatusService/static/node_modules/superagent/lib/client.js":[function(require,module,exports){
+},{}],"/Users/lucasmf/git/evaStatusService/static/node_modules/superagent/lib/client.js":[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -4471,7 +4473,7 @@ request.put = function(url, data, fn){
 
 module.exports = request;
 
-},{"emitter":"/Users/lucasmf/Documents/workspace-sts-3.6.3.SR1/forever-official/libexec/evaStatusService/static/node_modules/superagent/node_modules/component-emitter/index.js","reduce":"/Users/lucasmf/Documents/workspace-sts-3.6.3.SR1/forever-official/libexec/evaStatusService/static/node_modules/superagent/node_modules/reduce-component/index.js"}],"/Users/lucasmf/Documents/workspace-sts-3.6.3.SR1/forever-official/libexec/evaStatusService/static/node_modules/superagent/node_modules/component-emitter/index.js":[function(require,module,exports){
+},{"emitter":"/Users/lucasmf/git/evaStatusService/static/node_modules/superagent/node_modules/component-emitter/index.js","reduce":"/Users/lucasmf/git/evaStatusService/static/node_modules/superagent/node_modules/reduce-component/index.js"}],"/Users/lucasmf/git/evaStatusService/static/node_modules/superagent/node_modules/component-emitter/index.js":[function(require,module,exports){
 
 /**
  * Expose `Emitter`.
@@ -4637,7 +4639,7 @@ Emitter.prototype.hasListeners = function(event){
   return !! this.listeners(event).length;
 };
 
-},{}],"/Users/lucasmf/Documents/workspace-sts-3.6.3.SR1/forever-official/libexec/evaStatusService/static/node_modules/superagent/node_modules/reduce-component/index.js":[function(require,module,exports){
+},{}],"/Users/lucasmf/git/evaStatusService/static/node_modules/superagent/node_modules/reduce-component/index.js":[function(require,module,exports){
 
 /**
  * Reduce `arr` with `fn`.
@@ -4662,5 +4664,5 @@ module.exports = function(arr, fn, initial){
   
   return curr;
 };
-},{}]},{},["/Users/lucasmf/Documents/workspace-sts-3.6.3.SR1/forever-official/libexec/evaStatusService/static/client-app/js/eva_status/index.js"])
+},{}]},{},["/Users/lucasmf/git/evaStatusService/static/client-app/js/eva_status/index.js"])
 

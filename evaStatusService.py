@@ -208,10 +208,6 @@ def load_eva_status(username, password):
         a = getinfo(i, http_client)
         getfishinfo.append(a)
 
-    old_fish_list = ''
-    with open("cache/data.json", "r") as fish_list_cache_file:
-        old_fish_list = fish_list_cache_file.read()
-
     fish_list = json.dumps(getfishinfo)
 
     if not os.path.exists('cache/' + username):

@@ -154,25 +154,26 @@ EVA_STATUS_TABLE = React.createClass({
         console.log(this.state.loaded);
         return (
             <div>
-                <div>
-                    讀取中，請稍候...
-                </div>
-                <Table striped bordered condensed hover>
-                    <thead>
-                        <tr>
-                            <th></th>
+                <h3 style={{display: this.state.loaded ? 'none' : 'block', textAlign: 'center'}}>
+                讀取中，請稍候...
+                </h3>
+                <div style={{display: this.state.loaded ? 'block' : 'none'}}>
+                    <Table striped bordered condensed hover>
+                        <thead>
+                            <tr>
+                                <th></th>
                 {this.state.levels.map(function (level) {
                     return (
                         <th>{level.label}</th>
                         )
                 })
                     }
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td></td>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td></td>
                     {this.state.levels.map(function (level) {
                         var matchedEvaStatusList = $.grep(this.state.evaStatusList, function (evaStatus) {
                             return level.isLevel(evaStatus)
@@ -182,10 +183,10 @@ EVA_STATUS_TABLE = React.createClass({
                             )
                     }.bind(this))
                         }
-                            <td>{this.state.evaStatusList.length}({this.getListeningEvaStatusBetweenPeriod(this.state.evaStatusList)})
+                                <td>{this.state.evaStatusList.length}({this.getListeningEvaStatusBetweenPeriod(this.state.evaStatusList)})
 
-                            </td>
-                        </tr>
+                                </td>
+                            </tr>
                 {
                     this.state.departs.map(function (depart) {
                         var matchedEvaStatusList = $.grep(this.state.evaStatusList, function (evaStatus) {
@@ -218,9 +219,10 @@ EVA_STATUS_TABLE = React.createClass({
                         </tr>);
                     }.bind(this))
                     }
-                    </tbody>
-                </Table>
-               </div>
+                        </tbody>
+                    </Table>
+                </div>
+            </div>
             );
     }
 })

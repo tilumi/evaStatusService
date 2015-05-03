@@ -227,7 +227,8 @@ def init_db():
     conn = sqlite3.connect(db_file_path)
     cursor = conn.cursor()
     cursor.execute('CREATE TABLE users (username TEXT, password TEXT)')
-    cursor.execute('CREATE UNIQUE INDEX IF NOT EXISTS users.unique_username ON users (username)')
+    conn.commit()
+    cursor.execute('CREATE UNIQUE INDEX IF NOT EXISTS unique_username ON users (username)')
     conn.commit()
     conn.close()
 
@@ -309,11 +310,32 @@ from tornado.ioloop import IOLoop
 
 cmd = sys.argv[1]
 
-if cmd == 'server':
+
+def destroy_db():
+    os.remove(db_file_path)
+
+if cmd == 'start':
     pid = os.getpid()
     print "Running server at process " + str(pid)
     http_server = HTTPServer(WSGIContainer(app))
     http_server.listen(5000)
     IOLoop.instance().start()
+elif cmd == 'stop':
+    import subprocess
+    import signal
+
+    p = subprocess.Popen(['ps', '-A'], stdout=subprocess.PIPE)
+    out, err = p.communicate()
+
+    for line in out.splitlines():
+        if __file__ in line:
+            pid = int(line.split(None, 1)[0])
+            print __file__, pid
+            os.kill(pid, signal.SIGKILL)
 elif cmd == 'load':
     load_all_eva_status()
+elif cmd == 'reset_db':
+    destroy_db()
+    init_db()
+elif cmd == 'init_db':
+    init_db()

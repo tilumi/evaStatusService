@@ -316,22 +316,8 @@ if cmd == 'start':
     http_server = HTTPServer(WSGIContainer(app))
     http_server.listen(5000)
     IOLoop.instance().start()
-elif cmd == 'stop':
-    import subprocess
-    import signal
-
-    p = subprocess.Popen(['ps', '-A'], stdout=subprocess.PIPE)
-    out, err = p.communicate()
-
-    for line in out.splitlines():
-        if __file__ in line:
-            pid = int(line.split(None, 1)[0])
-            print __file__, pid
-            os.kill(pid, signal.SIGKILL)
 elif cmd == 'load':
     load_all_eva_status()
 elif cmd == 'reset_db':
     destroy_db()
-    init_db()
-elif cmd == 'init_db':
     init_db()

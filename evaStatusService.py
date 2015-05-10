@@ -251,12 +251,12 @@ def init_db():
     conn.commit()
     conn.close()
 
-def add_user(username, is_herder):
+def add_user(username, password, is_herder):
     if not os.path.exists(db_file_path):
         init_db()
     conn = sqlite3.connect(db_file_path)
     cursor = conn.cursor()
-    cursor.execute('INSERT INTO users (username, is_herder) VALUES (?, ?)', (username, int(is_herder)))
+    cursor.execute('INSERT INTO users (username, password, is_herder) VALUES (?, ?, ?)', (username, password, int(is_herder)))
     # print 'affectedRows: %d' % cursor.rowcount
     if cursor.rowcount == 1:
         print 'Sucessfully add user %s' % username
@@ -409,8 +409,9 @@ elif cmd == 'unset_herder':
     unset_herder(username)
 elif cmd == 'add_user':
     username = sys.argv[2]
-    is_herder = sys.argv[3]
-    add_user(username, is_herder)
+    password = sys.argv[3]
+    is_herder = sys.argv[4]
+    add_user(username, password, is_herder)
 elif cmd == 'remove_user':
     username = sys.argv[2]
     remove_user(username)

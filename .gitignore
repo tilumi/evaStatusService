@@ -2,3 +2,4 @@ cache
 static/node_modules
 .idea
 nohup.out
+static/static/js

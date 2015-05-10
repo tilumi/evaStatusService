@@ -131,13 +131,17 @@ EVA_STATUS_TABLE = React.createClass({
         evaStatusList.sort(function (a, b) {
             return a.order - b.order;
         });
-        this.setState({evaStatusList: evaStatusList, loaded: true, dimensionInstances:[]});
+        this.setState({evaStatusList: evaStatusList, loaded: true});
+        Actions.onDimensionChange([]);
     },
     onTimeRangeChange: function (timeRange) {
         // console.log(timeRange);
         this.setState({timeRange: timeRange});
     },
     cartesianProductOf: function(array) {
+        if(array.length == 0){
+            return [];
+        }
         function addTo(curr, args) {
 
             var i, copy, 
@@ -159,8 +163,6 @@ EVA_STATUS_TABLE = React.createClass({
 
             return result;
         }
-
-
         return addTo([], Array.prototype.slice.call(array));
     },
     onDimensionChange: function (dimensions){
@@ -256,11 +258,8 @@ EVA_STATUS_TABLE = React.createClass({
         // console.log(this.state.loaded);
         // console.log(this.state.dimensionInstances);
         return (
-            <div>
-                <h3 style={{display: this.state.loaded ? 'none' : 'block', textAlign: 'center'}}>
-                讀取中，請稍候...
-                </h3>
-                <div style={{display: this.state.loaded ? 'block' : 'none'}}>
+            <div>                
+                <div style={{display:'block'}}>
                     <Table striped bordered condensed hover>
                         <thead>
                             <tr>
@@ -355,7 +354,7 @@ var DateField = React.createClass({
     },
     onEndDateChange: function (date) {
         this.setState({endDate:date});
-        this.submit(this.state.startDate, endDate);
+        this.submit(this.state.startDate, date);
     },
     render: function () {        
         return <div>
@@ -375,19 +374,25 @@ var LogoutBtn = React.createClass({
 })
 
 var DimensionMultiSelect = React.createClass({
+    mixins: [Reflux.listenTo(Actions.onDimensionChange, "onDimensionChange")],
+    onDimensionChange: function(dimensions){        
+        this.setState({selectedDimensions:dimensions});
+    },
     getInitialState:function(){
         var Dimension = function (name, valuesProperty) {
             this.name = name;
-            this.valuesProperty = valuesProperty;
-            this.values = null;
+            this.valuesProperty = valuesProperty;            
         };
-        return {dimensions:[new Dimension('教會','church'), new Dimension('性別','gender'), new Dimension('部門','depart')]};
+        return {dimensions:[new Dimension('教會','church'), new Dimension('性別','gender'), new Dimension('部門','depart')]
+                ,selectedDimensions:[]
+                };
     },
     onChange: function(dimensions){        
+        this.state.selectedDimensions = dimensions
         Actions.onDimensionChange(dimensions);
     },
     render: function () {
-        return <Multiselect data={this.state.dimensions} onChange={this.onChange} textField='name'/>
+        return <Multiselect value={this.state.selectedDimensions} data={this.state.dimensions} onChange={this.onChange} textField='name'/>
     }
 })
 

@@ -156,9 +156,9 @@ def do_login(username, password, http_client):
     loginPostResponse = http_client.open(loginPostRequest)
     loginPostResponseString = loginPostResponse.read()
     if 'login' not in loginPostResponseString:
-        return str(True)
+        return True
     else:
-        return str(False)
+        return False
 
 
 def get_all_herders_with_password():
@@ -174,16 +174,21 @@ def get_all_herders_with_password():
     return result
 
 @app.route("/get_all_herders")
-def get_all_herders():
+def get_all_herders_with_cache():
     if not os.path.exists(db_file_path):
         init_db()
     conn = sqlite3.connect(db_file_path)
     cursor = conn.cursor()
     cursor.execute('SELECT username FROM users WHERE is_herder = ?', (1,))
     herders = [record[0] for record in cursor.fetchall()]
+    herders_with_cache = []
+    for herder in herders:
+        cache_file_path = 'cache/' + herder + '/data.json'
+        if os.path.exists(cache_file_path):
+            herders_with_cache.append(herder)
     cursor.close()
     conn.close()
-    return json.dumps(herders)
+    return json.dumps(herders_with_cache)
 
 @app.route("/load_all_eva_status")
 def load_all_eva_status():

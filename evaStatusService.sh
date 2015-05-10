@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 cmd=$1
-if [ "$cmd" == "start" ]; then
+
+function start_server {
     pid=`ps aux | grep 'evaStatusService.py' | grep -v 'grep' | awk '{print $2}'`
     if [ -n "$pid" ]; then
         echo "server is running, stop it first"
@@ -8,7 +9,9 @@ if [ "$cmd" == "start" ]; then
         nohup python -u evaStatusService.py start &
         echo "Server started as process id: "$!
     fi
-elif [ "$cmd" == "stop" ]; then
+}
+
+function stop_server {
     pid=`ps aux | grep 'evaStatusService.py' | grep -v 'grep' | awk '{print $2}'`
     if [ -n "$pid" ]; then
         kill -9 $pid
@@ -16,6 +19,15 @@ elif [ "$cmd" == "stop" ]; then
     else
         echo "server is not running"
     fi
+}
+
+if [ "$cmd" == "start" ]; then
+    start_server
+elif [ "$cmd" == "stop" ]; then
+    stop_server
+elif [ "$cmd" == "restart" ]; then
+    stop_server
+    start_server
 elif [ "$cmd" == "load" ]; then
     python evaStatusService.py load
 elif [ "$cmd" == "reset_db" ]; then

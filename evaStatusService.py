@@ -69,6 +69,11 @@ def getinfo(x, httpClient):
     else:
         gender = False
 
+    str = div[2].text.encode('unicode-escape')
+    list = str.split(":")
+    church = list[1].decode('unicode-escape')
+    # print church
+
     str = div[3].text.encode('unicode-escape')
     list = str.split(":")
     depart = list[1].decode('unicode-escape')
@@ -138,7 +143,8 @@ def getinfo(x, httpClient):
                 leclist.append([array[i], a, array[i + 2]])
                 i = i + 5
 
-    result = {"name": name, "gender": gender, "depart": depart, "order": order, "lessons": leclist}
+    result = {"name": name, "gender": gender, "depart": depart, "order": order, "lessons": leclist, "church": church}
+    # print result
     return result
 
 
@@ -155,10 +161,10 @@ def do_login(username, password, http_client):
         return str(False)
 
 
-def get_all_users():
+def get_all_herders_with_password():
     conn = sqlite3.connect(db_file_path)
     cursor = conn.cursor()
-    cursor.execute('SELECT username, password FROM users')
+    cursor.execute('SELECT username, password FROM users WHERE is_herder = ?',(1,))
     records = cursor.fetchall()
     result = []
     for record in records:
@@ -167,17 +173,29 @@ def get_all_users():
     conn.close()
     return result
 
+@app.route("/get_all_herders")
+def get_all_herders():
+    if not os.path.exists(db_file_path):
+        init_db()
+    conn = sqlite3.connect(db_file_path)
+    cursor = conn.cursor()
+    cursor.execute('SELECT username FROM users WHERE is_herder = ?', (1,))
+    herders = [record[0] for record in cursor.fetchall()]
+    cursor.close()
+    conn.close()
+    return json.dumps(herders)
 
 @app.route("/load_all_eva_status")
 def load_all_eva_status():
-    all_users = get_all_users()
-    for user in all_users:
-        load_eva_status(user['username'], user['password'])
+    all_herders = get_all_herders_with_password()
+    for herder in all_herders:
+        load_eva_status(herder['username'], herder['password'])
     return str(True)
 
 
 @app.route("/load_eva_status")
 def load_eva_status(username, password):
+    print 'start loading %s evaStatus' % username
     cookie_store = cookielib.CookieJar()
     http_client = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookie_store))
     do_login(username, password, http_client)
@@ -222,12 +240,63 @@ def load_eva_status(username, password):
 def init_db():
     conn = sqlite3.connect(db_file_path)
     cursor = conn.cursor()
-    cursor.execute('CREATE TABLE users (username TEXT, password TEXT)')
+    cursor.execute('CREATE TABLE users (username TEXT, password TEXT, is_herder TINYINT)')
     conn.commit()
     cursor.execute('CREATE UNIQUE INDEX IF NOT EXISTS unique_username ON users (username)')
     conn.commit()
     conn.close()
 
+def add_user(username, is_herder):
+    if not os.path.exists(db_file_path):
+        init_db()
+    conn = sqlite3.connect(db_file_path)
+    cursor = conn.cursor()
+    cursor.execute('INSERT INTO users (username, is_herder) VALUES (?, ?)', (username, int(is_herder)))
+    # print 'affectedRows: %d' % cursor.rowcount
+    if cursor.rowcount == 1:
+        print 'Sucessfully add user %s' % username
+    cursor.close()
+    conn.commit()
+    conn.close()
+
+def remove_user(username):
+    if not os.path.exists(db_file_path):
+        init_db()
+    conn = sqlite3.connect(db_file_path)
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM users WHERE username = ?', (username,))
+    print 'affectedRows: %d ' % cursor.rowcount
+    if cursor.rowcount == 1:
+        print 'Sucessfully remove user %s' % username
+    cursor.close()
+    conn.commit()
+    conn.close()
+
+def set_herder(username):
+    if not os.path.exists(db_file_path):
+        init_db()
+    conn = sqlite3.connect(db_file_path)
+    cursor = conn.cursor()
+    cursor.execute('UPDATE users SET is_herder = ? WHERE username = ?', (1,username))
+    print 'affectedRows: %d' % cursor.rowcount    
+    if cursor.rowcount == 1:
+        print 'Successfully set %s as a herder.' % username
+    cursor.close()
+    conn.commit()
+    conn.close()
+    
+
+def unset_herder(username):
+    if not os.path.exists(db_file_path):
+        init_db()
+    conn = sqlite3.connect(db_file_path)
+    cursor = conn.cursor()
+    cursor.execute('UPDATE users SET is_herder = ? WHERE username = ?', (0,username))    
+    print 'affectedRows: %d' % cursor.rowcount
+    cursor.close()
+    conn.commit()
+    conn.close()
+    print 'Successfully unset %s from a herder.' % username
 
 def get_password(username):
     if not os.path.exists(db_file_path):
@@ -246,7 +315,13 @@ def insert_or_update_user(username, password):
         init_db()
     conn = sqlite3.connect(db_file_path)
     cursor = conn.cursor()
-    cursor.execute('REPLACE INTO users (username, password) VALUES (?, ?)', (username, password))
+    cursor.execute('SELECT * FROM users WHERE username = ?', (username,))
+    if cursor.fetchone():
+        print 'user exists'
+        cursor.execute('UPDATE users SET password = ? WHERE username = ? ', (password, username))
+    else:
+        print 'user does not exist'
+        cursor.execute('INSERT INTO users (username, password) VALUES (?, ?)', (username, password)) 
     cursor.close()
     conn.commit()
     conn.close()
@@ -321,3 +396,16 @@ elif cmd == 'load':
 elif cmd == 'reset_db':
     destroy_db()
     init_db()
+elif cmd == 'set_herder':
+    username = sys.argv[2]
+    set_herder(username)
+elif cmd == 'unset_herder':
+    username = sys.argv[2]
+    unset_herder(username)
+elif cmd == 'add_user':
+    username = sys.argv[2]
+    is_herder = sys.argv[3]
+    add_user(username, is_herder)
+elif cmd == 'remove_user':
+    username = sys.argv[2]
+    remove_user(username)

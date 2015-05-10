@@ -52,9 +52,6 @@ const LINT_OPTS = {
     eqnull: true,
     jquery: true
 };
-const EXTERNAL_LIBS = {
-    common: "./client-app/js/lib/common.js"
-}
 
 function getBundler(file, options) {
     options = _.extend(options || {}, {
@@ -70,11 +67,13 @@ function getBundler(file, options) {
     return bundler;
 }
 
-function bundle(file, bundler) {
+function bundle(file, bundler, compileCommon) {
     var relativeFilename = file.path.replace(file.base, "");
     shell.echo(relativeFilename);
-    if(relativeFilename == 'js/lib/common.js'){
-        return bundler;
+    if(!compileCommon){
+        if(relativeFilename == 'js/lib/common.js') {
+            return bundler;
+        }
     }
     return bundler
         // Log browserify errors
@@ -102,11 +101,22 @@ function bundle(file, bundler) {
         .pipe(livereload());;
 }
 
+gulp.task('compile-all', function () {
+
+    var stream = gulp.src(APPS_GLOB)
+        .pipe(forEach(function (stream, file) {
+            bundle(file, getBundler(file), true);
+            return stream;
+        }));
+
+    return stream;
+});
+
 gulp.task('compile-app', function () {
 
     var stream = gulp.src(APPS_GLOB)
         .pipe(forEach(function (stream, file) {
-            bundle(file, getBundler(file));
+            bundle(file, getBundler(file), false);
             return stream;
         }));
 
@@ -121,7 +131,7 @@ gulp.task("autobuild", function() {
             var bundler = watchify(getBundler(file, watchify.args));
 
             function rebundle() {
-                return bundle(file, bundler);
+                return bundle(file, bundler, false);
             }
 
             // Whenever the application or its dependencies are modified, automatically rebundle the application.

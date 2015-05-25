@@ -35,3 +35,5 @@ elif [ "$cmd" == "reset_db" ]; then
 else
     echo "usage: evaStatusService.sh [start|stop|load|reset_db]"
 fi
+
+exit 0

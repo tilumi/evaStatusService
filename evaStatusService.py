@@ -212,7 +212,7 @@ def load_eva_status(username, password):
     print('List got')
 
     soup = BeautifulSoup.BeautifulSoup(fishPageResponseString)
-    learninglist = soup.find(id='collapse1')
+    learninglist = soup.find(id='Collapse1')
     href = learninglist.findAll('a', attrs={'href': re.compile("^javascript:formSubmit")})
     print('List content parsed!')
 
